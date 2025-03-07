@@ -7,30 +7,33 @@ app = FastAPI()
 # ✅ Load Summarization Model
 summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
 
-
 # ✅ Request Models
 class QueryRequest(BaseModel):
     query: str
 
-class SummarizeRequest(BaseModel):
+class SummarizationRequest(BaseModel):
     text: str
 
-# ✅ Root Endpoint
 @app.get("/")
 def root():
     return {"message": "FastAPI Summarization Service is running!"}
 
-# ✅ Query Processing Endpoint (Fix for 404 error)
 @app.post("/query")
 def process_query(request: QueryRequest):
     return {"response": f"You sent: {request.query}"}
 
-# ✅ Text Summarization Endpoint
 @app.post("/summarize")
-def summarize_text(request: SummarizeRequest):
-    if len(request.text) < 20:
-        raise HTTPException(status_code=400, detail="Text too short for summarization.")
-    
-    summary = summarizer(request.text, max_length=50, min_length=10, do_sample=False)
+def summarize_text(request: SummarizationRequest):
+    if len(request.text.split()) < 20:
+        raise HTTPException(status_code=400, detail="Text too short for summarization. Please provide at least 20 words.")
+
+    summary = summarizer(
+        request.text,
+        max_length=80,
+        min_length=20,
+        length_penalty=1.5,
+        num_beams=6,
+        do_sample=False
+    )
 
     return {"summary": summary[0]["summary_text"]}
