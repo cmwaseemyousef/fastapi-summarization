@@ -7,6 +7,7 @@ app = FastAPI()
 # ✅ Load Summarization Model
 summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
 
+
 # ✅ Request Models
 class QueryRequest(BaseModel):
     query: str
@@ -30,5 +31,6 @@ def summarize_text(request: SummarizeRequest):
     if len(request.text) < 20:
         raise HTTPException(status_code=400, detail="Text too short for summarization.")
     
-    summary = summarizer(request.text, max_length=150, min_length=30, do_sample=False)
+    summary = summarizer(request.text, max_length=50, min_length=10, do_sample=False)
+
     return {"summary": summary[0]["summary_text"]}
