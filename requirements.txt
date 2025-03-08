@@ -1,5 +1,13 @@
+
+---
+
+#### **3️⃣ `requirements.txt` (Dependencies)**
+```txt
 fastapi
 uvicorn[standard]
 transformers
 torch --index-url https://download.pytorch.org/whl/cpu
 pydantic
+slowapi
+nltk
+pytest
